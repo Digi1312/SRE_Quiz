@@ -1,0 +1,287 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>SRE on Call! - The Quiz</title>
+    <style>
+        /* CSS Styling */
+        @import url('https://fonts.googleapis.com/css2?family=Roboto:wght@400;700&display=swap');
+
+        :root {
+            --primary-bg: #f4f7f9;
+            --card-bg: #ffffff;
+            --primary-text: #2c3e50;
+            --secondary-text: #5a6a7a;
+            --accent-color: #007bff;
+            --accent-hover: #0056b3;
+            --correct-color: #28a745;
+            --incorrect-color: #dc3545;
+            --feedback-bg: #e9ecef;
+        }
+
+        body {
+            font-family: 'Roboto', sans-serif;
+            background-color: var(--primary-bg);
+            color: var(--primary-text);
+            display: flex;
+            justify-content: center;
+            align-items: center;
+            min-height: 100vh;
+            margin: 0;
+            padding: 20px;
+            box-sizing: border-box;
+        }
+
+        #quiz-container {
+            background-color: var(--card-bg);
+            border-radius: 15px;
+            box-shadow: 0 10px 30px rgba(0, 0, 0, 0.1);
+            width: 100%;
+            max-width: 600px;
+            overflow: hidden;
+            text-align: center;
+        }
+
+        .screen {
+            padding: 40px;
+        }
+
+        .screen h2 {
+            font-size: 2em;
+            margin-top: 0;
+            color: var(--primary-text);
+        }
+
+        .screen p {
+            font-size: 1.2em;
+            color: var(--secondary-text);
+            line-height: 1.6;
+            margin-bottom: 30px;
+        }
+        
+        #scenario-text {
+            font-weight: 700;
+            color: var(--primary-text);
+            background-color: var(--feedback-bg);
+            padding: 15px;
+            border-radius: 8px;
+        }
+
+        #choices-container {
+            display: flex;
+            flex-direction: column;
+            gap: 15px;
+        }
+
+        .choice-btn, .control-btn {
+            background-color: var(--accent-color);
+            color: white;
+            border: none;
+            padding: 15px 20px;
+            font-size: 1.1em;
+            border-radius: 8px;
+            cursor: pointer;
+            transition: background-color 0.3s ease, transform 0.2s ease;
+            text-align: left;
+        }
+        
+        .control-btn {
+            text-align: center;
+        }
+
+        .choice-btn:hover:not(:disabled), .control-btn:hover {
+            background-color: var(--accent-hover);
+            transform: translateY(-2px);
+        }
+        
+        .choice-btn:disabled {
+            cursor: not-allowed;
+            opacity: 0.7;
+        }
+
+        /* --- MODAL STYLES --- */
+        #modal-overlay {
+            position: fixed;
+            top: 0;
+            left: 0;
+            width: 100%;
+            height: 100%;
+            background-color: rgba(0, 0, 0, 0.6);
+            display: flex;
+            justify-content: center;
+            align-items: center;
+            z-index: 1000;
+            opacity: 0;
+            pointer-events: none;
+            transition: opacity 0.3s ease;
+        }
+
+        #modal-overlay.visible {
+            opacity: 1;
+            pointer-events: auto;
+        }
+
+        #feedback-modal {
+            background: var(--card-bg);
+            padding: 30px;
+            border-radius: 15px;
+            box-shadow: 0 5px 15px rgba(0,0,0,0.3);
+            text-align: center;
+            max-width: 90%;
+            width: 450px;
+            transform: scale(0.9);
+            transition: transform 0.3s ease;
+        }
+
+        #modal-overlay.visible #feedback-modal {
+            transform: scale(1);
+        }
+        
+        #modal-text {
+            font-size: 1.1em;
+            font-weight: bold;
+            margin-bottom: 25px;
+        }
+        
+        /* NEW DYNAMIC STYLES FOR MODAL */
+        .text-correct { color: var(--correct-color); }
+        .text-incorrect { color: var(--incorrect-color); }
+        .btn-correct { background-color: var(--correct-color); }
+        .btn-incorrect { background-color: var(--incorrect-color); }
+        
+        .hidden {
+            display: none;
+        }
+    </style>
+</head>
+<body>
+    <div id="quiz-container">
+        <div id="intro-screen" class="screen">
+            <img src="https://res.cloudinary.com/dlagufra4/image/upload/v1754486014/Gemini_Generated_Image_5jqiqz5jqiqz5jqi_ejhymt.png" alt="SRE Superhero" style="width: 150px; height: 150px; border-radius: 50%; margin-bottom: 20px;">
+
+            <h2>You're the SRE on Call!</h2>
+            <p>A critical service is failing, and you're the only one who can save it. Make the right choices to fix the problem and keep our customers happy!</p>
+            <button id="start-btn" class="control-btn">Start the Challenge</button>
+        </div>
+        <div id="quiz-screen" class="screen hidden">
+            <h2 id="question-title"></h2>
+            <p id="scenario-text"></p>
+            <div id="choices-container"></div>
+        </div>
+        <div id="result-screen" class="screen hidden">
+            <h2>Your SRE Report Card: Certified Problem Solver!</h2>
+            <p>You didn't just fix the issue—you found the root cause and focused on long-term solutions. That's exactly what the NCR SRE team does: we use software engineering to ensure our services are stable, scalable, and reliable.</p>
+            <p style="font-size:1em; font-weight: bold;">Want to know more? Ask us anything!</p>
+            <button id="play-again-btn" class="control-btn">Play Again</button>
+        </div>
+    </div>
+
+    <div id="modal-overlay">
+        <div id="feedback-modal">
+            <p id="modal-text"></p>
+            <button id="modal-action-btn" class="control-btn"></button>
+        </div>
+    </div>
+
+    <script>
+        // JavaScript Logic
+        const quizData = [
+            { question: "Question 1: The First Alert", scenario: "It's 3 AM. An alert wakes you up: 'Customer Checkout Service is running slow!' What is your first move?", choices: [ { text: "A) Immediately restart all the servers.", feedback: "A bold move! While this sometimes works (we call it 'turn it off and on again'), it doesn't tell you why it was slow. The problem might come right back! Let's try a more data-driven approach." }, { text: "B) Check the monitoring dashboards.", feedback: "Excellent choice! You're thinking like an SRE. Data comes first. You look at the dashboards and see that one of the databases is at 100% CPU usage." }, { text: "C) Blame the network team and go back to sleep.", feedback: "Haha, tempting! But a true SRE takes ownership. While you were sleeping, the service went down completely! Let's rewind." } ], correctChoice: 1 },
+            { question: "Question 2: Diagnosing the Problem", scenario: "You've found the problem: one database is overloaded. How do you handle it?", choices: [ { text: "A) Add 5 more database servers.", feedback: "More power! This might relieve the pressure, but it's very expensive and might not fix the root cause. A good SRE is also concerned with efficiency." }, { text: "B) Find the exact query that is slowing things down.", feedback: "Perfect! You're digging for the root cause. You find a single, poorly written query from a new software update is causing the entire problem." }, { text: "C) Just let it run slow. It will fix itself.", feedback: "If only! Unfortunately, problems like this rarely fix themselves. An SRE's job is to be proactive and protect the customer experience." } ], correctChoice: 1 },
+            { question: "Question 3: The Final Fix", scenario: "You've identified the single bad query. What is the ultimate SRE solution?", choices: [ { text: "A) Block the query from running.", feedback: "Good short-term fix! You've stopped the bleeding and stabilized the system. The service is back to normal speed." }, { text: "B) Work with the developers to fix the code and write an automated test so this never happens again.", feedback: "Gold standard! This is the heart of Site Reliability Engineering. You not only fixed the problem but also engineered a permanent solution to make the system more resilient for the future." } ], correctChoice: 1 }
+        ];
+
+        // DOM Elements
+        const introScreen = document.getElementById('intro-screen');
+        const quizScreen = document.getElementById('quiz-screen');
+        const resultScreen = document.getElementById('result-screen');
+        const startBtn = document.getElementById('start-btn');
+        const playAgainBtn = document.getElementById('play-again-btn');
+        const questionTitle = document.getElementById('question-title');
+        const scenarioText = document.getElementById('scenario-text');
+        const choicesContainer = document.getElementById('choices-container');
+        
+        // MODAL DOM ELEMENTS
+        const modalOverlay = document.getElementById('modal-overlay');
+        const modalText = document.getElementById('modal-text');
+        const modalActionBtn = document.getElementById('modal-action-btn');
+
+        let currentQuestionIndex = 0;
+
+        // Event Listeners
+        startBtn.addEventListener('click', startQuiz);
+        playAgainBtn.addEventListener('click', startQuiz);
+        modalActionBtn.addEventListener('click', handleModalAction);
+
+        function startQuiz() {
+            currentQuestionIndex = 0;
+            introScreen.classList.add('hidden');
+            resultScreen.classList.add('hidden');
+            quizScreen.classList.remove('hidden');
+            loadQuestion();
+        }
+
+        function loadQuestion() {
+            choicesContainer.innerHTML = '';
+            const currentQuestion = quizData[currentQuestionIndex];
+            questionTitle.textContent = currentQuestion.question;
+            scenarioText.textContent = currentQuestion.scenario;
+            currentQuestion.choices.forEach((choice, index) => {
+                const button = document.createElement('button');
+                button.textContent = choice.text;
+                button.classList.add('choice-btn');
+                button.addEventListener('click', () => handleChoice(index));
+                choicesContainer.appendChild(button);
+            });
+        }
+
+        function handleChoice(selectedIndex) {
+            const currentQuestion = quizData[currentQuestionIndex];
+            const choice = currentQuestion.choices[selectedIndex];
+            document.querySelectorAll('.choice-btn').forEach(btn => btn.disabled = true);
+
+            // Populate modal text
+            modalText.textContent = choice.feedback;
+
+            if (selectedIndex === currentQuestion.correctChoice) {
+                // Setup modal for CORRECT answer
+                modalText.className = 'text-correct';
+                modalActionBtn.textContent = 'Next';
+                modalActionBtn.className = 'control-btn btn-correct';
+            } else {
+                // Setup modal for INCORRECT answer
+                modalText.className = 'text-incorrect';
+                modalActionBtn.textContent = 'Try Again';
+                modalActionBtn.className = 'control-btn btn-incorrect';
+            }
+            
+            // Show the modal
+            modalOverlay.classList.add('visible');
+        }
+        
+        function handleModalAction() {
+            // Hide the modal first
+            modalOverlay.classList.remove('visible');
+
+            if (modalActionBtn.textContent === 'Next') {
+                currentQuestionIndex++;
+                if (currentQuestionIndex < quizData.length) {
+                    loadQuestion();
+                } else {
+                    showResult();
+                }
+            } else { // If the button says "Try Again"
+                // Re-enable choices so the user can try again
+                document.querySelectorAll('.choice-btn').forEach(btn => btn.disabled = false);
+            }
+        }
+
+        function showResult() {
+            quizScreen.classList.add('hidden');
+            resultScreen.classList.remove('hidden');
+        }
+
+    </script>
+</body>
+</html>
