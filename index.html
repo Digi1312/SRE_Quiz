@@ -3,7 +3,7 @@
 <head>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <title>SRE on Call! - The Quiz</title>
+    <title>SRE Hero! - The NCR Atleos Challenge</title>
     <style>
         /* CSS Styling */
         @import url('https://fonts.googleapis.com/css2?family=Roboto:wght@400;700&display=swap');
@@ -22,10 +22,10 @@
 
         body {
             font-family: 'Roboto', sans-serif;
-            background-image: url('https://res.cloudinary.com/dlagufra4/image/upload/v1754488187/Gemini_Generated_Image_2hehwr2hehwr2heh_raclex.png');
-            background-size: cover; /* This makes the image cover the entire screen */
-            background-position: center; /* This centers the image */
-            background-attachment: fixed; /* This prevents the image from scrolling with content */
+            background-image: url('https://res.cloudinary.com/dlagufra4/image/upload/v1754488187/Gemini_Generated_Image_2hehwr2hehwr2heh_raclex.png'); /* SRE Hero Background */
+            background-size: cover;
+            background-position: center;
+            background-attachment: fixed;
             color: var(--primary-text);
             display: flex;
             justify-content: center;
@@ -91,6 +91,7 @@
         
         .control-btn {
             text-align: center;
+            font-weight: bold;
         }
 
         .choice-btn:hover:not(:disabled), .control-btn:hover {
@@ -103,7 +104,7 @@
             opacity: 0.7;
         }
 
-        /* --- MODAL STYLES --- */
+        /* MODAL STYLES */
         #modal-overlay {
             position: fixed;
             top: 0;
@@ -145,9 +146,10 @@
             font-size: 1.1em;
             font-weight: bold;
             margin-bottom: 25px;
+            line-height: 1.6;
         }
         
-        /* NEW DYNAMIC STYLES FOR MODAL */
+        /* DYNAMIC STYLES FOR MODAL */
         .text-correct { color: var(--correct-color); }
         .text-incorrect { color: var(--incorrect-color); }
         .btn-correct { background-color: var(--correct-color); }
@@ -160,24 +162,27 @@
 </head>
 <body>
     <div id="quiz-container">
-        <div id="intro-screen" class="screen">
-            <img src="https://res.cloudinary.com/dlagufra4/image/upload/v1754486014/Gemini_Generated_Image_5jqiqz5jqiqz5jqi_ejhymt.png" alt="SRE Superhero" style="width: 150px; height: 150px; border-radius: 50%; margin-bottom: 20px;">
 
-            <h2>You're the SRE on Call!</h2>
-            <p>A critical service is failing, and you're the only one who can save it. Make the right choices to fix the problem and keep our customers happy!</p>
-            <button id="start-btn" class="control-btn">Start the Challenge</button>
+        <div id="intro-screen" class="screen">
+            <img src="https://res.cloudinary.com/dlagufra4/image/upload/v1754486014/Gemini_Generated_Image_5jqiqz5jqiqz5jqi_ejhymt.png" alt="SRE Superhero" style="width: 150px; height: 150px; border-radius: 50%; margin-bottom: 20px; border: 3px solid var(--accent-color);">
+            <h2>An SRE Hero Is Needed!</h2>
+            <p>The city sleeps, but the digital world of NCR Atleos never does. A critical system is failing, the ATMs are in trouble, and the transactions are at risk! It's time to be the hero behind the screen.</p>
+            <button id="start-btn" class="control-btn">I Accept the Mission!</button>
         </div>
+
         <div id="quiz-screen" class="screen hidden">
             <h2 id="question-title"></h2>
             <p id="scenario-text"></p>
             <div id="choices-container"></div>
         </div>
+
         <div id="result-screen" class="screen hidden">
-            <h2>Your SRE Report Card: Certified Problem Solver!</h2>
-            <p>You didn't just fix the issue—you found the root cause and focused on long-term solutions. That's exactly what the NCR SRE team does: we use software engineering to ensure our services are stable, scalable, and reliable.</p>
-            <p style="font-size:1em; font-weight: bold;">Want to know more? Ask us anything!</p>
+            <h2>Congratulations, You're an ATM Hero!</h2>
+            <p>The cash flows freely thanks to you! You didn't just fix the problem, you thought like a true SRE and made the system stronger for the future.</p>
+            <p style="font-size:1em; font-weight: bold;">Our SRE team makes sure NCR Atleos is always reliable. Ask us anything!</p>
             <button id="play-again-btn" class="control-btn">Play Again</button>
         </div>
+
     </div>
 
     <div id="modal-overlay">
@@ -188,14 +193,41 @@
     </div>
 
     <script>
-        // JavaScript Logic
+        // JavaScript Logic with all the new funny text
         const quizData = [
-            { question: "Question 1: The First Alert", scenario: "It's 3 AM. An alert wakes you up: 'Customer Checkout Service is running slow!' What is your first move?", choices: [ { text: "A) Immediately restart all the servers.", feedback: "A bold move! While this sometimes works (we call it 'turn it off and on again'), it doesn't tell you why it was slow. The problem might come right back! Let's try a more data-driven approach." }, { text: "B) Check the monitoring dashboards.", feedback: "Excellent choice! You're thinking like an SRE. Data comes first. You look at the dashboards and see that one of the databases is at 100% CPU usage." }, { text: "C) Blame the network team and go back to sleep.", feedback: "Haha, tempting! But a true SRE takes ownership. While you were sleeping, the service went down completely! Let's rewind." } ], correctChoice: 1 },
-            { question: "Question 2: Diagnosing the Problem", scenario: "You've found the problem: one database is overloaded. How do you handle it?", choices: [ { text: "A) Add 5 more database servers.", feedback: "More power! This might relieve the pressure, but it's very expensive and might not fix the root cause. A good SRE is also concerned with efficiency." }, { text: "B) Find the exact query that is slowing things down.", feedback: "Perfect! You're digging for the root cause. You find a single, poorly written query from a new software update is causing the entire problem." }, { text: "C) Just let it run slow. It will fix itself.", feedback: "If only! Unfortunately, problems like this rarely fix themselves. An SRE's job is to be proactive and protect the customer experience." } ], correctChoice: 1 },
-            { question: "Question 3: The Final Fix", scenario: "You've identified the single bad query. What is the ultimate SRE solution?", choices: [ { text: "A) Block the query from running.", feedback: "Good short-term fix! You've stopped the bleeding and stabilized the system. The service is back to normal speed." }, { text: "B) Work with the developers to fix the code and write an automated test so this never happens again.", feedback: "Gold standard! This is the heart of Site Reliability Engineering. You not only fixed the problem but also engineered a permanent solution to make the system more resilient for the future." } ], correctChoice: 1 }
+            { 
+                question: "The 3 AM Alert", 
+                scenario: "It's 3 AM. Your phone buzzes like crazy. A whole network of NCR Atleos ATMs is running super slow, and people can't get their cash for late-night snacks! What's your first move?", 
+                choices: [ 
+                    { text: "A) The Panic Button: Hit the big red panic button! Roll back the last update and pray it wasn't something important.", feedback: "Whoa, easy there! A rollback is powerful, but you're flying blind. A true SRE looks at the data first!" }, 
+                    { text: "B) The SRE Detective: Put on your detective hat and dive into the sea of glowing charts. The truth is in there somewhere!", feedback: "Exactly! You check the dashboards and spot the problem immediately. On to the next clue, detective!" }, 
+                    { text: "C) The Denial: Shrug, roll over, and go back to sleep. A few slow transactions won't hurt, right? (Spoiler: It will. Very much.)", feedback: "Oh no! While you were sleeping, the problem got worse! An SRE always investigates. Let's try that again." } 
+                ], 
+                correctChoice: 1 
+            },
+            { 
+                question: "The Overworked Database", 
+                scenario: "The dashboards show one of our main transaction databases is working way too hard—its CPU is at 100%! It's trying its best, but it's about to faint from exhaustion.", 
+                choices: [ 
+                    { text: "A) The Big Spender: Make it rain cloud servers! If one server is tired, five more should do the trick. It's only money, after all.", feedback: "More servers might help, but it's an expensive guess that doesn't fix the real issue. The finance department would not be happy!" }, 
+                    { text: "B) The Code Whisperer: Time to read the Matrix. Scan the code logs line-by-line to find the one tiny process that's causing all this chaos.", feedback: "Perfect! You pinpointed the exact piece of code that's causing the trouble. You're a true Code Whisperer!" }, 
+                    { text: "C) The Optimist: Give it a pep talk. Maybe the database just needs some encouragement? It’ll probably fix itself eventually.", feedback: "If only it were that easy! Servers don't have feelings (yet), and problems like this need real action. Let's try again!" } 
+                ], 
+                correctChoice: 1 
+            },
+            { 
+                question: "The Final Fix", 
+                scenario: "Success! You found the culprit. A new piece of code is asking the database for the same customer's account balance a million times a second.", 
+                choices: [ 
+                    { text: "A) The Digital Band-Aid: Put a digital band-aid on it. Just block that single piece of code for now and grab a coffee. Problem solved... for the next hour.", feedback: "A good temporary fix to stop the bleeding! But a true SRE knows the problem will just come back later." }, 
+                    { text: "B) The Alliance: Form an alliance! Grab some coffee, walk over to the dev team, and work together to create a permanent, beautiful fix that will never wake you up again.", feedback: "This is the way! You fixed the problem for good and made the whole system better. That's peak SRE performance!" }, 
+                    { text: "C) The Robot Butler: Build a robot to do the dirty work. Write a script that just reboots the whole database every 10 minutes. No one will notice... right?", feedback: "Yikes! Automating a bad fix is a classic trap. This just creates more problems down the line. We need a real solution!" } 
+                ], 
+                correctChoice: 1 
+            }
         ];
 
-        // DOM Elements
+        // All the DOM Elements and Functions from before...
         const introScreen = document.getElementById('intro-screen');
         const quizScreen = document.getElementById('quiz-screen');
         const resultScreen = document.getElementById('result-screen');
@@ -204,15 +236,11 @@
         const questionTitle = document.getElementById('question-title');
         const scenarioText = document.getElementById('scenario-text');
         const choicesContainer = document.getElementById('choices-container');
-        
-        // MODAL DOM ELEMENTS
         const modalOverlay = document.getElementById('modal-overlay');
         const modalText = document.getElementById('modal-text');
         const modalActionBtn = document.getElementById('modal-action-btn');
-
         let currentQuestionIndex = 0;
 
-        // Event Listeners
         startBtn.addEventListener('click', startQuiz);
         playAgainBtn.addEventListener('click', startQuiz);
         modalActionBtn.addEventListener('click', handleModalAction);
@@ -232,7 +260,7 @@
             scenarioText.textContent = currentQuestion.scenario;
             currentQuestion.choices.forEach((choice, index) => {
                 const button = document.createElement('button');
-                button.textContent = choice.text;
+                button.innerHTML = choice.text; // Use innerHTML to render text formatting like bold if needed
                 button.classList.add('choice-btn');
                 button.addEventListener('click', () => handleChoice(index));
                 choicesContainer.appendChild(button);
@@ -243,30 +271,22 @@
             const currentQuestion = quizData[currentQuestionIndex];
             const choice = currentQuestion.choices[selectedIndex];
             document.querySelectorAll('.choice-btn').forEach(btn => btn.disabled = true);
-
-            // Populate modal text
             modalText.textContent = choice.feedback;
 
             if (selectedIndex === currentQuestion.correctChoice) {
-                // Setup modal for CORRECT answer
                 modalText.className = 'text-correct';
                 modalActionBtn.textContent = 'Next';
                 modalActionBtn.className = 'control-btn btn-correct';
             } else {
-                // Setup modal for INCORRECT answer
                 modalText.className = 'text-incorrect';
                 modalActionBtn.textContent = 'Try Again';
                 modalActionBtn.className = 'control-btn btn-incorrect';
             }
-            
-            // Show the modal 
             modalOverlay.classList.add('visible');
         }
         
         function handleModalAction() {
-            // Hide the modal first
             modalOverlay.classList.remove('visible');
-
             if (modalActionBtn.textContent === 'Next') {
                 currentQuestionIndex++;
                 if (currentQuestionIndex < quizData.length) {
@@ -274,8 +294,7 @@
                 } else {
                     showResult();
                 }
-            } else { // If the button says "Try Again"
-                // Re-enable choices so the user can try again
+            } else {
                 document.querySelectorAll('.choice-btn').forEach(btn => btn.disabled = false);
             }
         }
@@ -284,7 +303,6 @@
             quizScreen.classList.add('hidden');
             resultScreen.classList.remove('hidden');
         }
-
     </script>
 </body>
 </html>
